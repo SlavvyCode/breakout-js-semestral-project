@@ -1,35 +1,105 @@
 cíl projektu, postup, popis funkčnosti:
 
 
-JS Breakout
+# JS Breakout
+## Cíl projektu:
 
-Cíl projektu:
+
+    Cílem projektu JS Breakout bylo vytvoření jednoduché breakoutové hry s implementací několika speciálních funkcí a použitím konceptu Single Page Application (SPA). Zároveň splnit mnou vytyčené a cvičícím schválené zadání, které je vidět zde:
+
+```
+"Breakout
+zkusil bych zpracovat jako SPA.
+
+Dve stranky: prvni bude shrnovat funkcionality uvodni stranky + nastaveni - nastaveni podrobnosti (splni spoustu z tech HTML pozadavku na nastaveni a kontrolu inputu),
+druha stranka bude jen canvas hry + neco malo kolem
+
+co se tyce hry samotne, rad bych implementoval nejake specialni features - nejake powerups ktere budou sebratelne palkou (padaji dolu po zniceni cihel, treba 1% sance) - zvetsovani palky na 30 sek., suprmicek ktery  prorazi dve cihly nez se odrazi, ma jinou barvu.
+
+cihly budou obycejne breakoutove, jinak budou mit take nejakou durabilitu, aby ne vsechny byly znicitelne jen jednim odrazem
+
+Rad bych implementoval postupne zrychleni hry s kazdou rozbitou cihlou az k jistemu limitu
+
+To je asi vse ze strany herni.
+
+rad bych mel aspon 2 ruzne layouty cihel nebo generovane nebo moznost nastavit je uzivatelem.
+
+budou implementovane zvuky
+
+chci mit aplikaci pouzitelnou na mobilu
+
+tlacitka zpet/vpred v prohlizeci budou fungovat na obou strankach
+
+prechod mezi strankami bude nejaka animace treba
+
+co se tyce API  mozna bych pouzil neco pro ukladani score nebo neco obdobneho.
+
+```
+
+-----------
+## Postup
+Při vývoji jsem prvně vyvíjel základní herní mechaniky a poté
+
+Mám několik WIP záložních souborů v repozitáři ale na začátku jsem kvůli velikosti projektu a po konzultaci se cvičícím usoudil, že nestojí za to trackovat projekt na GITu.
 
 
-    Cílem projektu JS Breakout bylo vytvoření jednoduché breakoutové hry s implementací speciálních funkcí a použitím konceptu Single Page Application (SPA).
+--------
 
-    Popis funkčnosti:
-    Úvodní stránka:
+## Popis funkčnosti:
 
-    Úvodní stránka zahrnuje shrnutí funkcí a možnost přechodu na nastavení.
-    Nastavení:
-
-    Na stránce s nastavením byla implementována detailní kontrola a validace vstupů uživatele, stejně jako možnost změny herních parametrů, jako je rychlost míčku či velikost pálky.
-    Herní stránka:
-
-    Hlavní část projektu obsahovala canvas hry s grafickými prvky.
+   ### Úvodní stránka s nastavením:
+   Úvodní stránka umožňuje spustit novou nebo rozehranou hru a přejít na příslušnou obrazovku. Dále obsahuje různé nastavení hry, s kontrolou a validací vstupů uživatele ve formě tlačítek, vstupního pole a checkbox pro zapnutí zvuků a muziky.
+   ### Herní stránka:
+   Hlavní část projektu obsahuje canvas hry s grafickými prvky.
     Implementace breakoutové hry s pohybujícím se míčkem a pálkou.
-    Speciální funkce zahrnovaly power-upy, cihly s různou trvanlivostí a postupné zrychlování hry s každou rozbitou cihlou.
-    Vizuální a zvukové prvky:
 
-    Byly implementovány různé layouty cihel nebo možnost nastavení uživatelem.
-    Animace přechodu mezi stránkami a zvukové efekty jako náraz míčku a zničení cihly byly součástí projektu.
-    Mobilní použitelnost:
+#### Ovládání
+Je vícero možností jak hru ovládat:
+- levou a pravou šipkou na klávesnici .- je defaultní a pokud je vícero inputů, "přebije ostatní vstupní možnosti"
+- dotykem - při podržení se pálka posune co nejblíže k horizontální pozici prstu kdekoliv na obrazovce.
+- myší - při běžném pohybu se pálka bude táhnout za pozicí myši
 
-    Aplikace byla optimalizována pro použití na mobilních zařízeních, s responzivním designem a ovládáním.
-    Navigace v prohlížeči:
+#### Herní prvky
+Hra má možnost fungovat s několika úrovněmi. Pro ukázku budou implementovány 2.
+Při ničení cihel míčkem je středně velká šance, že vypadnou power-upy, které jdou sebrat pálkou - ty můžou být:
+1. Rozšiřovací power-up
+2. Zesilňovací power-up - dovoluje ničit silné cihly na jednu ránu míčkem
+Oba dva trvají stejně dlouho. Pokud už jeden máme a sebereme další stejného typu, pouze se prodlouží doba prvního.
 
-    Tlačítka Zpět/Vpřed v prohlížeči fungovala na obou stránkách, a byla implementována animace přechodu mezi stránkami.
-    Ukládání hry:
+Cihly ve hře mají různou výdrž. Defaultně se zničí za 1 ránu míčkem,  některé ale vydrží i více (v projektu implementovány jen 2, je otevřené pro změny)
 
-    Pro ukládání stavu hry bylo použito LocalStorage API, což hráčům umožňovalo načíst poslední úroveň, ve které byli před ukončením hry.
+Hra se postupně s časem zrychluje.
+
+Po zničení všech cihel postoupí hráč do další úrovně.
+
+Pokud hráč vyhraje zničením poslední cihly na poslení úrovni nebo prohraje tím že nestihne zabránit dotyku míčku dolní stěny, vyjede animované modální okno které sdělí jak daleko se dostal a dá mu možnost hrát znovu nebo jít zpět do menu.
+
+Kanvas se dynamicky rozšiřuje se stránkou, hra se adaptuje.
+
+   ### Vizuální a zvukové prvky:
+   V projektu jsou animace přechodu mezi stránkami a na obrazovce se hrou jsou zvukové efekty jako náraz míčku do cihly nebo odraz od stěny. Jsou zprostředkovány pomocí Audio prvků.
+   Je také implementovaná chiptune muzika, stažená z online zdroje, který nevyžadoval kreditaci.
+   Tlačítka v menu mění na přemyšítkování velikost s animací a některá z nich i barvu po jejich vybrání.
+   Vizuální stránka celého projektu je průměrná, nejsem zběhlý ve vizuálním designu. Je ale dostatečná. Použily se pokročilé CSS selektory, transformace a animace.
+
+   ### Mobilní použitelnost a jiné displaye:
+   Aplikace je hratelná dotykem a při přílišně úzkém displayi zmizí obrazovky a jsou nahrazeny oknem, které informuje o potřebě změnit velikost. Použity byly mediaQueries
+
+   ### Ukládání hry:
+   Pro ukládání stavu hry bylo použito LocalStorage API, což hráčům umožňovalo načíst poslední úroveň, ve které byli před ukončením hry.
+
+  ### Navigace v prohlížeči:
+   Tlačítka Zpět/Vpřed v prohlížeči fungovala na obou stránkách pomocí history API. Narozdíl od ukládání, použití předního tlačítka může umožnit vrácení do úrovně přesně v momentu kdy hráč skončil.
+
+  ### Offline funkcionalita
+  Aplikace je plně offline, nemá žádné změny chování při připojení k internetu.
+
+  ### Objektový přístup
+  Hra je navržena objektovým způsobem.
+
+  ### HTML Semantické značky
+  Pokud se nemýlím, sémantické značky v HTML části kódu jsou správně implementované
+
+
+  ### Kompatabilita
+  Projekt je funkční na různých prohlížečích, vyzkoušel jsem na Chromu, Opeře i Firefoxu

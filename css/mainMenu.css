@@ -1,0 +1,99 @@
+
+
+
+h1 {
+    text-align: center;
+    padding-top: 2em;
+    margin-bottom: 2em;
+}
+h1::before, h1::after{
+    content: "✨";
+}
+
+#settingsHeader::before, #settingsHeader::after{
+    margin: 0.3em;
+    content: "🛠️";
+    background-color: aliceblue;
+    border-radius: 40%;
+}
+h2 {
+    text-align: center;
+    margin: 1.5em;
+}
+h3 {
+    font-size: large;
+    text-align: center;
+    margin: 0.5em;
+}
+
+
+#mainMenu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#mainMenu > * {
+    margin: 0.5em;
+}
+#gameScreen {
+    display: none;
+}
+
+
+#mainMenu {
+    animation: SPAPageChange 1s ease;
+}
+
+
+.play-button{
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s; /* Apply smooth transition for the transformation */
+}
+
+.play-button:hover{
+    transform: scale(1.1); /* Scale up the button by 10% on hover */
+}
+
+
+
+
+.settingsDiv {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.settingsDiv > * {
+    margin: 0 10px;
+}
+.settingsDiv > button{
+    font-size: 1.1em;
+    padding: 0.1em 0.5em;
+}
+
+.speedButton {
+    transition: transform 0.3s;
+}
+.speedButton.active {
+    background-color: #a2ff00; /* Change to your desired highlight color */
+    cursor: pointer;
+}
+.speedButton:hover {
+    transform: scale(1.22);
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
