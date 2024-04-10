@@ -98,8 +98,6 @@
         <button id="nextLevelButton">Continue and Save</button>
     </div>
 </main>
-
-
 <footer>
     <!--    my contact info-->
     <p>Made by Adam Štrobl. Contact me at <a href="mailto:strobad1@fel.cvut.cz">strobad1@fel.cvut.cz</a></p>
@@ -181,11 +179,10 @@
 
 
     // region declarations
-    let gameLost = false;
     let frameCount = 0;
-    let gameLoopActive = false;
-    let startOrLoadGamePressed = false;
+
     let gamePaused = false;
+    let paddleSpeed = 5;
     let gameWon = false;
     const POWER_UP_DURATION = 15 * 1000;
     const gameSpeedOptions = {
@@ -193,7 +190,7 @@
         MEDIUM: 0.5,
         FAST: 1
     }
-    let selectedSpeedPreset = gameSpeedOptions.MEDIUM;
+    let selectedSpeed = gameSpeedOptions.MEDIUM;
 
 
     const canvas = document.getElementById("breakoutCanvas");
@@ -207,10 +204,6 @@
     const PADDLE_HEIGHT_PERCENT = 0.030;
     const PADDLE_WIDTH_DEFAULT_PERCENT = 0.15;
     const PADDLE_WIDTH_LARGE_PERCENT = 0.35;
-
-    let currPaddleWidthPercent = PADDLE_WIDTH_DEFAULT_PERCENT;
-    let currPaddleHeightPercent = PADDLE_HEIGHT_PERCENT;
-
 
     const BALL_RADIUS_PERCENT = 0.02;
     const WEAK_BRICK_COLOR = "#8f9815";
@@ -230,11 +223,8 @@
     let ballPow = 1;
     let gameSpeed = 1;
 
-
-    let maxGameSpeedRatio = 0.25 * gameSpeed;
-    let maxGameSpeed = currCanvasWidth * maxGameSpeedRatio;
-
-    let framesToReachMaxSpeed = 30 * 60;
+    const maxGameSpeed = 2.5 * gameSpeed;
+    const framesToReachMaxSpeed = 30 * 60;
 
 
     let moveSpeedMultiplier = 0.01;
@@ -244,7 +234,7 @@
     let powerUps;
 
     let powerUpWidthPercent = 0.015;
-    let powerUpSpeedPercent = 0.00005;
+    let powerUpSpeedPercent = 0.005;
 
     const bricks = [];
     let currentLevel = 0;
@@ -337,8 +327,7 @@
 
         // Draw the paddle
         draw() {
-            this.width = currCanvasWidth * currPaddleWidthPercent;
-            this.height = currCanvasHeight * currPaddleHeightPercent;
+
             ctx.beginPath();
             ctx.rect(this.x, currCanvasHeight - this.height, this.width, this.height);
             ctx.fillStyle = REGULAR_BALL_COLOR;
@@ -370,7 +359,6 @@
 
         // Draw the ball
         draw() {
-            this.radius = currCanvasHeight * BALL_RADIUS_PERCENT;
 
 
             ctx.beginPath();
@@ -381,8 +369,8 @@
         }
 
         move() {
-
             this.x += this.dx;
+
             this.y += this.dy;
 
 // if ball got moved off screen by the ceiling or walls, teleport it back to the nearest wall
@@ -437,10 +425,16 @@
 
                     playSound(bounceSound);
 
-                    // Move the ball outside the paddle
+// TODO still gets stuck
 
-                    if (this.y + this.radius > currCanvasHeight - paddle.height) {
+// Fix for ball getting stuck inside the paddle
+
+                    if (this.y > currCanvasHeight - paddle.height) {
+
+// Move the ball outside the paddle
+
                         this.y = currCanvasHeight - paddle.height - this.radius;
+
                     }
 
                 }
@@ -449,6 +443,10 @@
 
         }
 
+        // Update the ball size based on the current canvas size
+        updateSize() {
+            this.radius = currCanvasHeight / BALL_RADIUS_PERCENT;
+        }
     }
 
     /**
@@ -464,7 +462,7 @@
 
         // Set the power-up dimensions and initial position
         constructor(x, y) {
-            this.width = 0;
+            this.width =0;
             this.x = x;
             this.y = y
         }
@@ -494,7 +492,8 @@
         checkCollisionWithPaddle() {
             if (this.x > paddle.x &&
                 this.x < paddle.x + paddle.width &&
-                this.y + this.width / 2 > currCanvasHeight - paddle.height) {
+                this.y +this.width/2 > currCanvasHeight - paddle.height)
+            {
                 const index = powerUps.indexOf(this);
                 powerUps.splice(index, 1);
                 playSound(powerUpSound)
@@ -535,8 +534,8 @@
         // If the paddle hits the power-up, give it a power-up
         ifPaddleHitGivePowerUp() {
             if (this.checkCollisionWithPaddle()) {
-                currPaddleWidthPercent = PADDLE_WIDTH_LARGE_PERCENT;
-                setTimeout(() => currPaddleWidthPercent = PADDLE_WIDTH_DEFAULT_PERCENT, POWER_UP_DURATION);
+                paddle.width = currCanvasWidth * PADDLE_WIDTH_LARGE_PERCENT;
+                setTimeout(() => paddle.width = currCanvasWidth * PADDLE_WIDTH_DEFAULT_PERCENT, POWER_UP_DURATION);
             } else {
                 super.checkOutOfBounds();
             }
@@ -662,7 +661,7 @@
         // Clear existing bricks
         bricks.length = 0;
         // Set the game speed and number of brick rows and columns
-        gameSpeed = selectedSpeedPreset;
+        gameSpeed = selectedSpeed;
         num_brick_rows = levelLayouts[levelNum].length;
         num_brick_cols = levelLayouts[levelNum][0].length;
 
@@ -687,7 +686,6 @@
      * Function to set up the specified level by loading its details and initializing the game objects
      */
     function setUpLevel() {
-        gameLost = false;
         saveGameState();
         resizeCanvas()
         loadLevelDetails(currentLevel);
@@ -703,9 +701,12 @@
     function nextLevel() {
         gamePaused = false;
         currentLevel++;
+
         if (currentLevel < levelLayouts.length) {
             setUpLevel();
         }
+
+
     }
 
     //endregion
@@ -715,18 +716,11 @@
      * Function to start a new game
      */
     function newGame() {
-
         //reset all variables
-        hideGameOverModal();
         currentLevel = 0;
         gameWon = false;
         gamePaused = false;
-        gameSpeed = selectedSpeedPreset;
-        currentBallColor = REGULAR_BALL_COLOR;
-        ballPow = 1;
-        currPaddleWidthPercent = PADDLE_WIDTH_DEFAULT_PERCENT;
-
-
+        gameSpeed = selectedSpeed;
         playSound(music);
 
         // Set up the first level
@@ -741,7 +735,6 @@
     startGameButton.addEventListener('click', () => {
         goToGameScreen();
         newGame();
-        startOrLoadGamePressed = true;
     });
 
     /**
@@ -901,8 +894,6 @@
      * Speed up the game over time
      */
     function speedUp() {
-
-        maxGameSpeed = currCanvasWidth * maxGameSpeedRatio;
         //increase rate at which the game moves up to a certain rate. have it reach the max in X seconds
         if (gameSpeed < maxGameSpeed) {
             gameSpeed += maxGameSpeed / framesToReachMaxSpeed;
@@ -917,13 +908,13 @@
     function handleGameSpeed(selectedGameSpeed) {
         switch (selectedGameSpeed) {
             case 'slowButton':
-                selectedSpeedPreset = gameSpeedOptions.SLOW;
+                selectedSpeed = gameSpeedOptions.SLOW;
                 break;
             case 'mediumButton':
-                selectedSpeedPreset = gameSpeedOptions.MEDIUM;
+                selectedSpeed = gameSpeedOptions.MEDIUM;
                 break;
             case 'fastButton':
-                selectedSpeedPreset = gameSpeedOptions.FAST;
+                selectedSpeed = gameSpeedOptions.FAST;
                 break;
         }
     }
@@ -946,7 +937,6 @@
      */
     function gameLoop() {
         // Clear the canvas
-        gameLoopActive = true;
         ctx.clearRect(0, 0, currCanvasWidth, currCanvasHeight);
 
         ballTouchedBottomCheck();
@@ -970,12 +960,9 @@
         // Check for power-up collisions
         powerUps.forEach(powerUp => powerUp.ifPaddleHitGivePowerUp());
 
-        if (!gamePaused) {
+        if (!gamePaused)
             requestAnimationFrame(gameLoop);
-        } else {
-            cancelAnimationFrame(gameLoop);
-            gameLoopActive = false;
-        }
+
     }
 
     //endregion
@@ -994,7 +981,6 @@
      * Function to load saved game state
      */
     function loadLastSavedGameAndGoToGame() {
-        startOrLoadGamePressed = true;
         const gameState = loadGameState();
         gamePaused = false;
 
@@ -1045,7 +1031,7 @@
         const gameState = {
             currentLevel: currentLevel,
             currentScore: 0,
-            selectedSpeed: selectedSpeedPreset,
+            selectedSpeed: selectedSpeed,
         };
         // Save the game state to local storage
         localStorage.setItem('gameState', JSON.stringify(gameState));
@@ -1107,7 +1093,7 @@
         if (gameScreen.style.display === '') {
             return;
         }
-        gameLost = true;
+
         //change the header based on if the player won or lost
         if (gameWon) {
             playSound(victorySound);
@@ -1158,18 +1144,14 @@
      * Function to go to the main menu
      */
     function goToMainMenu() {
-        // Set the history state to display the main menu
+
         historyAPIState = {
             displayGame: false,
             displayMenu: true
         };
-        // Push the main menu state to the history API
         window.history.pushState(historyAPIState, null, "");
 
-
         changePageLayout();
-
-        // Stop the game loop
         gamePaused = true;
         music.pause();
 
@@ -1186,19 +1168,6 @@
         if (event.state) {
             historyAPIState = event.state;
         }
-        else {
-            historyAPIState = {
-                displayGame: window.location.hash === '#game',
-                displayMenu: window.location.hash !== '#game'
-            };
-        }
-        if (!event.persisted) {
-            //if navigated to an already visited page and the game is not running, start the game
-            if (!gameLoopActive) {
-                gamePaused = false;
-                gameLoop();
-            }
-        }
         changePageLayout(historyAPIState);
     };
 
@@ -1206,24 +1175,18 @@
      * function to render the correct screen based on the history state
      */
     function changePageLayout() {
+
         // Check the history state to determine which screen to display
         if (historyAPIState.displayGame) {
+
             mainMenu.style.display = 'none';
             gameScreen.style.display = 'block';
             window.location.hash = '#game';
             if (!checkSaveGameExists()) {
                 loadGameButton.disabled = true;
             }
-            playSound(music);
-
-
-            if (gameLost) {
-                showGameOverModal();
-            } else {
-                hideGameOverModal();
-                gamePaused = false;
-            }
-
+            hideGameOverModal();
+            gamePaused = false;
 
         } else if (historyAPIState.displayMenu) {
             mainMenu.style.display = 'flex';
@@ -1233,7 +1196,6 @@
             if (!checkSaveGameExists()) {
                 loadGameButton.disabled = true;
             }
-            music.pause();
         }
     }
 
@@ -1246,9 +1208,8 @@
             displayMenu: false
         };
 
-
         // Push the game screen state to the history API
-        window.history.pushState(historyAPIState, null, "#game");
+        window.history.pushState(historyAPIState, null, "");
 
         if (!isMuted) {
             playSound(music);
@@ -1295,6 +1256,7 @@
     }
 
 
+
     /**
      * Function to update the paddle size based on the current canvas size
      */
@@ -1308,24 +1270,13 @@
      * Function to update the game speed based on the selected speed and current window width
      */
     function updateGameSpeed() {
-        // Calculate the paddle's speed as a percentage of the canvas width
-        const paddleMovePercentage = 0.025; // Adjust this value to control the paddle's speed (5% of the canvas width in this example)
-        moveByAmount = currCanvasWidth * paddleMovePercentage * selectedSpeedPreset;
-
-
-        //update ball speed
-        let newGameSpeed = selectedSpeedPreset * (currCanvasWidth * moveSpeedMultiplier);
+        // Update the game and paddle speed based on the selected speed and current window width
+        const newGameSpeed = selectedSpeed * (currCanvasWidth * moveSpeedMultiplier );
+        // Calculate the speed ratio between the new and old game speeds
+        // Update the paddle's move amount
+        moveByAmount = paddleSpeed * (currCanvasWidth * moveSpeedMultiplier );
         // Update the gameSpeed variable with the new game speed
         gameSpeed = newGameSpeed;
-
-
-        ballSpeedMult = 0.05;
-
-
-        //ball dx = current direction * new game speed
-        ball.dx = Math.sign(ball.dx) * 7 * gameSpeed * ballSpeedMult;
-        ball.dy = Math.sign(ball.dy) * 4 * gameSpeed * ballSpeedMult;
-
     }
 
     /**

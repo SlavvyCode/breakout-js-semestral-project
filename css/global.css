@@ -1,0 +1,122 @@
+
+html, body {
+    min-height: 100dvh;
+    margin: 0;
+    padding: 0;
+}
+body {  /* Set the background color */
+    background: linear-gradient(to bottom, #6dafaf, rgba(109, 175, 175, 0.71));
+
+    background:-webkit-linear-gradient(rgba(109, 175, 175, 0.71), #6dafaf);
+    background:-moz-linear-gradient(rgba(109, 175, 175, 0.71), #6dafaf);
+    background:linear-gradient(rgba(109, 175, 175, 0.71), #6dafaf);
+    background: -o-linear-gradient(rgba(109, 175, 175, 0.71), #6dafaf);
+    background: -ms-linear-gradient(rgba(109, 175, 175, 0.71), #6dafaf);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000');
+    background: linear-gradient(rgba(109, 175, 175, 0.71), #6dafaf);
+
+
+
+
+
+
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+
+
+
+
+button {
+    background-color: #f1f1f1;
+    cursor: progress;
+    border: 2px solid #1234;
+    border-radius: 5px;
+    padding: 0.5em 1em;
+    display: inline-block;
+    font-size: 1.3em;
+    margin: 0.5em;
+}
+
+
+
+
+@media screen and (orientation: portrait) and (max-device-width: 600px) {
+    /* Add styles to prompt the user to rotate the device */
+    #gameScreen {
+        display: none !important; /* Hide the game screen */
+    }
+    #mainMenu {
+        display: none !important; /* Hide the main menu */
+    }
+    .rotate-message {
+        display: block; /* Show a message prompting the user to rotate the device */
+    }
+}
+
+@media  screen and (min-device-width: 600px)  {
+    .rotate-message {
+        display: none; /* Show a message prompting the user to rotate the device */
+    }
+}
+.rotate-message {
+    position: fixed;
+    background-color: mediumseagreen; /* New color */
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2em;
+    text-align: center;
+    max-width: 80%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+
+footer > p {
+    margin: 0;
+    padding: 10px;
+}
+footer > p > a {
+    color: rgb(223 255 131); !important;
+    text-decoration: underline;
+}
+footer > p > a:hover {
+    color: #ffa600;
+}
+
+
+
+
+@keyframes SPAPageChange {
+    from {
+        margin-top: 15%;  /* Start offscreen */
+        opacity: 0;
+    }
+    to {
+        margin-top: 0%;  /* End at desired position */
+        opacity: 1;
+    }
+}
+
+
+
+
+
+footer {
+    margin-top: 5em;
+    position: sticky;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #333;
+    color: white;
+    text-align: center;
+}

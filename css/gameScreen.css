@@ -1,0 +1,69 @@
+
+
+#gameScreen {
+    animation: SPAPageChange 1s ease;
+}
+
+
+/*game styles */
+#gameOverHeader{
+    margin: 0.5em;
+
+}
+canvas {
+    border: 3px solid black;
+    border-radius: 10px;
+    display: block;
+    margin: 0 auto;
+    background-color: #f1f1f1;
+
+
+    width: 90%;
+    height: auto; /* Maintain the aspect ratio by setting height to auto */
+}
+
+
+#gameOverModal, #nextLevelModal{
+    display: none;
+}
+
+.modal-content {
+
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    left: 50%;
+    top: 20%    ;
+    overflow: auto;
+    transform: translate(-50%, -50%);
+
+
+    position: fixed;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    max-width: 20em;
+
+    border: 2px solid mediumseagreen;
+
+    margin: 50% auto;  /* Start offscreen */
+    padding: 20px;
+    animation-name: modalRiseUp;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;  /* Keep the final state after animation */
+}
+
+@keyframes modalRiseUp {
+    from {
+        margin-top: 50%;  /* Start offscreen */
+        opacity: 0;
+    }
+    to {
+        margin-top: 15%;  /* End at desired position */
+        opacity: 1;
+    }
+}
+
+
